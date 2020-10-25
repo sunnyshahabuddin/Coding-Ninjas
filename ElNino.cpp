@@ -1,13 +1,7 @@
 /*"Success isn't permanent, failure isn't fatal,
-    it's the courage to continue that counts"
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-*/
+    it's the courage to continue that counts"*/
 #include<bits/stdc++.h>
 using namespace std;
-#define A 1000000007ll
-#define D 100000000000000ll
-#define B 998244353ll
-#define C 1000000000000000000ll
 #define pfin(a) printf("%d\n",a);
 #define pfln(a) printf("%lld\n",a);
 #define pfis(a) printf("%d ",a);
@@ -21,60 +15,37 @@ using namespace std;
 #define ll long long
 #define F first
 #define S second
-#define vi vector<ll>
+#define vi vector<int>
 #define vc vector<char>
 #define endl "\n"
-#define deci fixed<<setprecision(9)
-const ll mod = 1e9 + 9;
-#define N 1000005
-ll arr[N + 1];
-vector<ll> v1[N + 1];
-ll parent[N + 1][25];
-void dfs(ll s, ll par)
+#define BLOCK 750
+const ll mod = 1e9 + 7;
+vector<ll> v1[200005];
+bool vis[200005] = {false};
+ll dis[200005];
+ll mark[200005];
+ll curr = -1;
+void dfs(ll s)
 {
+
+    curr++;
+    //  cout << curr << endl;
+    if (curr > 0)
+    {
+        mark[1]++;
+        mark[curr + 1]--;
+    }
+    vis[s] = 1;
     ll i;
-    parent[s][0] = par;
     for (i = 0; i < v1[s].size(); i++)
     {
         ll k = v1[s][i];
-
-        if (k != par)
+        if (vis[k] == 0)
         {
-            dfs(k, s);
+            dfs(k);
+            curr--;
         }
     }
-}
-void twotoithparent(ll n)
-{
-    ll i, j;
-    for (i = 1; i < 20; i++)
-    {
-        for (j = 1; j <= n; j++)
-        {
-            if (parent[j][i - 1] != -1)
-            {
-                parent[j][i] = parent[parent[j][i - 1]][i - 1];
-            }
-        }
-    }
-}
-ll kthparent(ll k, ll u)
-{
-    while (k > 0)
-    {
-        ll i = log2(k);
-        if (parent[u][i] != -1)
-        {
-            u = parent[u][i];
-            k = k - (1 << i);
-        }
-        else
-        {
-            return -1;
-            break;
-        }
-    }
-    return u;
 }
 int main()
 {
@@ -84,48 +55,41 @@ int main()
     // for writing output to output.txt
     freopen("output.txt", "w", stdout);
 #endif
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    memset(parent, -1, sizeof(parent));
-    ll n, k;
+    ll n, m;
+    unordered_map<ll, ll> mp;
     sfl(n);
-    sfl(k);
-    f(i,1,n+1)
+    sfl(m);
+    f(i, 1, m + 1)
     {
-        sfl(color[i]);
+        sfl(dis[i]);
+        if (dis[i] <= 200005)
+        {
+            mp[dis[i]]++;
+        }
     }
     f(i, 1, n)
     {
-        ll x, y;
+        ll x;
         sfl(x);
-        sfl(y);
-        v1[x].pb(y);
-        v1[y].pb(x);
+        v1[x].pb(i + 1);
+        v1[i + 1].pb(x);
     }
-    dfs(1, -1);
-    twotoithparent(n);
-    /* f(i, 1, n + 1)
-     {
-         f(j, 0, 6)
-         {
-             cout << parent[i][j] << " ";
-         }
-         cout << endl;
-     }*/
-    f(i, 1, n + 1)
+    dfs(1);
+
+    ll ans = 0;
+    f(i, 0, n + 1)
     {
-     
-        ll ans = kparent(k, i);
-        // cout << ans << endl;
-        if (color[ans] == color[i])
+        mark[i] = mark[i] + mark[i - 1];
+        if (mp[i] > 0)
         {
-            cout << ans << " ";
+            ans += mark[i];
         }
-        else
-        {
-            cout << "-1" << " ";
-        }
+        // cout << mark[i] << " ";
     }
-
-
+    if (mp[0] > 0)
+    {
+        ans += n;
+    }
+    cout << ans << endl;
+    return 0;
 }
